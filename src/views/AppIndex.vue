@@ -57,6 +57,16 @@
           </v-list-item-content>
         </v-list-item>
       </router-link>
+      <router-link tag="span" to="/dokter">
+        <v-list-item link>
+          <v-list-item-action>
+            <v-icon>mdi-account</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>
+            <v-list-item-title>Dokter</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </router-link>
     </v-list>
     </v-navigation-drawer>
 

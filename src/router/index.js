@@ -32,6 +32,11 @@ const routes = [
     component: Obat
   },
   {
+    path: "/dokter",
+    name: "Dokter",
+    component: () =>import("../views/Dokter.vue")
+  },
+  {
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard

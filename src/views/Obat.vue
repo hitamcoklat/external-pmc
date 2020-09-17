@@ -15,12 +15,12 @@
                 class="mx-auto"
                 outlined            
             >
-                <v-col cols="12" sm="12">
+                <!-- <v-col cols="12" sm="12">
                     <date-range-picker 
                         @update="updateValues"
                         v-model="dateRange"></date-range-picker>                   
                     <v-btn v-on:click="btnPilihTanggal" style="margin-left: 10px;" color="primary" medium>Pilih Tanggal</v-btn>                
-                </v-col>
+                </v-col> -->
                 <v-col cols="12" sm="12">
                     <v-select
                         v-model="selectedItem"
@@ -32,35 +32,22 @@
                     ></v-select>
 <!--                     <v-btn style="margin-left: 0px;" v-on:click="btnTampilSemua" color="success" large>Tampil Semua</v-btn>   -->              
                     <v-btn style="margin-left: 10px; background-color: #E65D37; color: white;" v-on:click="btnExportPdf" x-large>Export PDF</v-btn>                     
+                    <v-btn style="margin-left: 10px; background-color: #E5F8E7; color: black;" v-on:click="btnExportExcell" x-large>Export Excell</v-btn>                     
                 </v-col>           
             </v-card>
       
         </v-col>
         <v-list style="margin-top: 2em;" three-line subheader fixed-header>          
-            <v-data-table
-                :headers="headers"
-                :items="dataRow"
-                :search="search"
-                id="my-table"
-            >
-                <template v-slot:item.actions="{ item }">
-                    <v-icon
-                        small
-                        style="color: blue;"
-                        class="mr-2"
-                        @click="editItem(item)"
-                    >
-                        mdi-pencil
-                    </v-icon>
-                    <v-icon
-                        style="color: red;"
-                        small
-                        @click="deleteItem(item)"
-                    >
-                        mdi-delete
-                    </v-icon>
-                </template>        
-            </v-data-table>
+            <vue-excel-editor v-model="dataRow" :page=100 autocomplete filter-row ref="grid">
+                <vue-excel-column field="ID"   label="Kode Barang" />
+                <vue-excel-column field="NAMA"   label="Nama Barang" />
+                <vue-excel-column field="KATEGORI"  label="Kelompok Barang" />
+                <!-- <vue-excel-column field="NAMA" label="Stok Minimum" /> -->
+                <vue-excel-column field="STOK"    label="Jml. Stok" />
+                <vue-excel-column field="SATUAN"  label="Satuan Jual Terkecil" />
+                <vue-excel-column field="HARGA_BELI"  label="Harga Beli" />
+                <vue-excel-column field="PERSEDIAAN"  label="Persediaan" />
+            </vue-excel-editor>
         </v-list>  
         <v-snackbar
             :timeout="timeout"
@@ -107,7 +94,7 @@ export default {
           { text: 'Persediaan', value: 'PERSEDIAAN' },
         ],
         dataRow: [],
-        search: ''        
+        search: '',        
     }),  
     methods: {
         btnPilihTanggal: function() {
@@ -145,6 +132,9 @@ export default {
                     this.dataRow = response.data.data
                 })               
         },
+        btnExportExcell: function () {
+            this.$refs.grid.exportTable('excell')
+        },
         btnExportPdf: function() {
             const doc = new jsPDF()
             
@@ -155,7 +145,6 @@ export default {
                     { header: 'Kode Barang', dataKey: 'ID' },
                     { header: 'Nama Barang', dataKey: 'NAMA' },
                     { header: 'Kelompok Barang', dataKey: 'KATEGORI' },
-                    { header: 'Stok Minimum', dataKey: 'STOK' },
                     { header: 'Jml. Stok', dataKey: 'STOK' },
                     { header: 'Sat. Jual Terkecil', dataKey: 'SATUAN' },
                     { header: 'Harga Beli', dataKey: 'HARGA_BELI' },
