@@ -10,7 +10,7 @@ Vue.use(VueExcelEditor)
 
 Vue.prototype.$http = axios;
 // Vue.prototype.$apiUrl = "http://localhost:8000";
-Vue.prototype.$apiUrl = "http://192.168.0.110/project/rs_pmc/api"; 
+Vue.prototype.$apiUrl = "http://192.168.43.55/project/rs_pmc/api"; 
 // Vue.prototype.$apiUrl = "http://192.168.100.57/app-rs-api"; // rs pake ini
 Vue.config.productionTip = false
 
