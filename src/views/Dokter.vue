@@ -52,19 +52,19 @@
     <v-dialog v-model="dialogRuangan" scrollable max-width="400px">
       <v-card>
         <v-card-title>Pilih Ruangan</v-card-title>
-        <v-divider></v-divider>
+        <v-divider></v-divider>       
         <v-card-text>
             <v-treeview
                 v-model="selection"
                 :items="dataRuangan"
-                :selection-type="selectionType"
+                selection-type="independent"
                 selectable
                 return-object
                 open-all
             >
                 <template v-slot:label="{ item }">
                     {{ item.DESKRIPSI }}
-                </template>
+                </template>            
             </v-treeview>
         </v-card-text>
         <v-divider></v-divider>
@@ -110,6 +110,8 @@
         form: [],
         dataRow: [],
         dataRuangan: [],
+        selectedRuangan: [],
+        selectedPegawai: [],
         cariRuangan: '',
         snackbar: false,
       }
@@ -129,7 +131,23 @@
         },
 
         pilihRuangan() {
-            console.log(this.selection)
+
+            var idRuangan = []
+            this.selection.forEach(element => {
+                idRuangan.push(element.ID)
+            });
+
+            var dataKirim = {
+                ID_RUANGAN: idRuangan,
+                DATA_DOKTER: this.selectedPegawai
+            }
+
+            // update Ruangan Dokter
+            this.$http.post(this.$apiUrl + '/dokter/input-dokter-ruangan.php', dataKirim)
+                .then((response) => {
+                    console.log(response)
+                })
+
         },
         
         fetchData() {
@@ -168,7 +186,8 @@
                 })        
         },
 
-        editItem() {
+        editItem(item) {
+            this.selectedPegawai = item;
             this.dialogRuangan = true
             this.fetchRuangan()
         },
