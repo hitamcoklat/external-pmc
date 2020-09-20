@@ -32,7 +32,7 @@
             <v-icon
                 style="color: red; border: 1px solid #CCC; border-radius: 5px; padding: 5px;"
                 small
-                @click="deleteItem(item)"
+                @click="disablePegawai(item)"
             >
                 mdi-delete
             </v-icon>
@@ -79,19 +79,20 @@
     <v-dialog v-model="dialogAddDokter" persistent max-width="600px">
       <v-card>
         <v-card-title>
-          <span class="headline">Data Dokter</span>
+          <span class="headline">Input Pegawai</span>
         </v-card-title>
         <v-card-text>
           <v-container>
             <v-row>
               <v-col cols="12">
-                <v-text-field label="*NIP" required></v-text-field>
+                <v-text-field v-model="nip" label="*NIP" required></v-text-field>
               </v-col>
               <v-col cols="12" sm="6" md="4">
-                <v-text-field label="Gelar Depan" hint="example of helper text only on focus"></v-text-field>
+                <v-text-field v-model="gelarDepan" label="Gelar Depan" hint="Masukan Gelar Depan"></v-text-field>
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <v-text-field
+                  v-model="nama"
                   label="Nama"
                   hint="Masukan Nama Tanpa Gelar"
                   persistent-hint
@@ -100,6 +101,7 @@
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <v-text-field
+                  v-model="gelarBelakang"
                   label="Nama Belakang"
                   hint="Masukan Gelar Belakang"
                   persistent-hint
@@ -108,6 +110,8 @@
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <v-select
+                  item-text="DESKRIPSI"
+                  item-value="ID"
                   v-model="modelJenisKelamin"
                   :items="itemJenisKelamin"
                   label="Jenis Kelamin"
@@ -147,6 +151,8 @@
               </v-col> 
               <v-col cols="12" sm="6" md="4">
                 <v-autocomplete
+                  item-text="DESKRIPSI"
+                  item-value="DESKRIPSI"                
                   v-model="modelTempatLahir"
                   :items="itemTempatLahir"
                   label="Tempat Lahir"
@@ -154,6 +160,8 @@
               </v-col>                          
               <v-col cols="12" sm="6" md="4">
                 <v-select
+                  item-text="DESKRIPSI"
+                  item-value="ID"                
                   v-model="modelAgama"
                   :items="itemAgama"
                   label="Agama"
@@ -162,6 +170,8 @@
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <v-select
+                  item-text="DESKRIPSI"
+                  item-value="ID"                
                   v-model="modelProfesi"
                   :items="itemProfesi"
                   label="Jenis Profesi"
@@ -170,6 +180,8 @@
               </v-col>
               <v-col cols="12" sm="6" md="4">
                 <v-select
+                  item-text="DESKRIPSI"
+                  item-value="ID"                
                   v-model="modelSMF"
                   :items="itemSMF"
                   label="Pilih SMF"
@@ -240,6 +252,10 @@
         modelProfesi: [],
         itemSMF: [],
         modelSMF: [],
+        gelarDepan: '',
+        nama: '',
+        gelarBelakang: '',
+        nip: ''
       }
     },
     methods: {
@@ -338,58 +354,92 @@
           this.fetchSMF();
         },
 
+        disablePegawai(item) {
+          console.log(item)
+          this.$swal({
+            title: 'Apakah anda yakin ingin me-non aktifkan pegawai ini?',
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: `Ya`,
+            denyButtonText: `Tidak`,
+          }).then((result) => {
+            if(result.isConfirmed) {
+              this.$http.post(this.$apiUrl + '/pegawai/disable-pegawai.php', {id: item.ID})
+                .then((response) => {
+                  console.log(response)
+                })
+              this.$swal('Updated!', '', 'success')
+            }
+          })
+          this.fetchData()
+        },
+
         simpanPegawai() {
-          this.dialogAddDokter = false
-          console.log(this.modelTempatLahir)
+
+          let dataKirim = {
+            TEMPAT_LAHIR: this.modelTempatLahir,
+            TGL_LAHIR: this.date,
+            JENIS_KELAMIN: this.modelJenisKelamin,
+            AGAMA: this.modelAgama,
+            PROFESI: this.modelProfesi,
+            SMF: this.modelSMF,
+            NAMA: this.nama,
+            GELAR_DEPAN: this.gelarDepan,
+            GELAR_BLKNG: this.gelarBelakang,
+            NIP: this.nip
+          }
+
+          this.$http.post(this.$apiUrl + '/pegawai/input-pegawai.php', dataKirim)
+              .then((response) => {
+                this.dialogAddDokter = false
+                if(response.data.status == true) {
+                  this.$swal({
+                    icon: 'success',
+                    text: 'Pegawai berhasil di input!',
+                  });
+                } else {
+                  this.$swal({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Terjadi kesalahan!',
+                  });                  
+                }
+              })
+          
         },
 
         fetchTempatLahir() {
           this.$http.get(this.$apiUrl + '/wilayah/get-all-wilayah.php')
               .then((response) => {
-                  response.data.data.forEach((item, index) => {
-                    this.itemTempatLahir.push(item.DESKRIPSI)
-                    this.modelTempatLahir.push(item.ID)
-                  })
+                this.itemTempatLahir = response.data.data
               })
         },
 
         fetchAgama() {
           this.$http.get(this.$apiUrl + '/get-referensi.php?jenis=1')
               .then((response) => {
-                  response.data.data.forEach((item, index) => {
-                    this.itemAgama.push(item.DESKRIPSI)
-                    this.modelAgama.push(item.ID)
-                  })
+                this.itemAgama = response.data.data
               })
         },
 
         fetchSMF() {
           this.$http.get(this.$apiUrl + '/get-referensi.php?jenis=26')
               .then((response) => {
-                  response.data.data.forEach((item, index) => {
-                    this.itemSMF.push(item.DESKRIPSI)
-                    this.modelSMF.push(item.ID)
-                  })
+                this.itemSMF = response.data.data
               })
         },
 
         fetchProfesi() {
           this.$http.get(this.$apiUrl + '/get-referensi.php?jenis=36')
               .then((response) => {
-                  response.data.data.forEach((item, index) => {
-                    this.itemProfesi.push(item.DESKRIPSI)
-                    this.modelProfesi.push(item.ID)
-                  })
+                this.itemProfesi = response.data.data
               })
         },
         
         fetchJenisKelamin() {
           this.$http.get(this.$apiUrl + '/get-referensi.php?jenis=2')
               .then((response) => {
-                  response.data.data.forEach((item, index) => {
-                    this.itemJenisKelamin.push(item.DESKRIPSI)
-                    this.modelJenisKelamin.push(item.ID)
-                  })
+                this.itemJenisKelamin = response.data.data
               })             
         }
 
