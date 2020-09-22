@@ -288,6 +288,18 @@
             this.$http.post(this.$apiUrl + '/dokter/input-dokter-ruangan.php', dataKirim)
                 .then((response) => {
                     console.log(response)
+                    if(response.data.status == true) {
+                      this.$swal({
+                        icon: 'success',
+                        text: 'Ruangan berhasil dipilih!',
+                      });                      
+                    } else {
+                      this.$swal({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Terjadi kesalahan!',
+                      }); 
+                    }
                 })
 
         },
