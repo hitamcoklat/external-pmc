@@ -255,7 +255,8 @@
         gelarDepan: '',
         nama: '',
         gelarBelakang: '',
-        nip: ''
+        nip: '',
+        ipAddress: ''
       }
     },
     methods: {
@@ -285,7 +286,7 @@
             }
 
             // update Ruangan Dokter
-            this.$http.post(this.$apiUrl + '/dokter/input-dokter-ruangan.php', dataKirim)
+            this.$http.post(this.ipAddress + '/dokter/input-dokter-ruangan.php', dataKirim)
                 .then((response) => {
                     console.log(response)
                     if(response.data.status == true) {
@@ -307,7 +308,7 @@
         fetchData() {
             this.snackbar = true;
             // cek rekam medis exist
-            this.$http.get(this.$apiUrl + '/dokter/get-all-dokter.php')
+            this.$http.get(this.ipAddress + '/dokter/get-all-dokter.php')
                 .then((response) => {
                     if(response.data.status == true) {
                         this.snackbar = false;
@@ -319,7 +320,7 @@
         },
 
         fetchRuanganByNama(nama) {
-            this.$http.get(this.$apiUrl + '/ruangan/search-ruangan.php?q=' + nama)
+            this.$http.get(this.ipAddress + '/ruangan/search-ruangan.php?q=' + nama)
                 .then((response) => {
                     this.snackbar = false;
                     if(response.data.status == true) {
@@ -331,7 +332,7 @@
         fetchRuangan() {
             this.snackbar = true;
             // cek rekam medis exist
-            this.$http.get(this.$apiUrl + '/ruangan/get-all-ruangan.php')
+            this.$http.get(this.ipAddress + '/ruangan/get-all-ruangan.php')
                 .then((response) => {
                     this.snackbar = false;
                     if(response.data.status == true) {
@@ -376,7 +377,7 @@
             denyButtonText: `Tidak`,
           }).then((result) => {
             if(result.isConfirmed) {
-              this.$http.post(this.$apiUrl + '/pegawai/disable-pegawai.php', {id: item.ID})
+              this.$http.post(this.ipAddress + '/pegawai/disable-pegawai.php', {id: item.ID})
                 .then((response) => {
                   console.log(response)
                 })
@@ -401,7 +402,7 @@
             NIP: this.nip
           }
 
-          this.$http.post(this.$apiUrl + '/pegawai/input-pegawai.php', dataKirim)
+          this.$http.post(this.ipAddress + '/pegawai/input-pegawai.php', dataKirim)
               .then((response) => {
                 this.dialogAddDokter = false
                 if(response.data.status == true) {
@@ -421,35 +422,35 @@
         },
 
         fetchTempatLahir() {
-          this.$http.get(this.$apiUrl + '/wilayah/get-all-wilayah.php')
+          this.$http.get(this.ipAddress + '/wilayah/get-all-wilayah.php')
               .then((response) => {
                 this.itemTempatLahir = response.data.data
               })
         },
 
         fetchAgama() {
-          this.$http.get(this.$apiUrl + '/get-referensi.php?jenis=1')
+          this.$http.get(this.ipAddress + '/get-referensi.php?jenis=1')
               .then((response) => {
                 this.itemAgama = response.data.data
               })
         },
 
         fetchSMF() {
-          this.$http.get(this.$apiUrl + '/get-referensi.php?jenis=26')
+          this.$http.get(this.ipAddress + '/get-referensi.php?jenis=26')
               .then((response) => {
                 this.itemSMF = response.data.data
               })
         },
 
         fetchProfesi() {
-          this.$http.get(this.$apiUrl + '/get-referensi.php?jenis=36')
+          this.$http.get(this.ipAddress + '/get-referensi.php?jenis=36')
               .then((response) => {
                 this.itemProfesi = response.data.data
               })
         },
         
         fetchJenisKelamin() {
-          this.$http.get(this.$apiUrl + '/get-referensi.php?jenis=2')
+          this.$http.get(this.ipAddress + '/get-referensi.php?jenis=2')
               .then((response) => {
                 this.itemJenisKelamin = response.data.data
               })             
@@ -457,7 +458,11 @@
 
     },
     created() {
+        this.ipAddress = 'http://' + localStorage.getItem("ip_address")
         this.fetchData();
+        console.log(this.ipAddress)
+    },
+    beforeCreate() {
     }
   }
 </script>

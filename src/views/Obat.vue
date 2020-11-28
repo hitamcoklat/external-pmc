@@ -94,13 +94,14 @@ export default {
           { text: 'Persediaan', value: 'PERSEDIAAN' },
         ],
         dataRow: [],
-        search: '',        
+        search: '',
+        ipAddress: ''      
     }),  
     methods: {
         btnPilihTanggal: function() {
             console.log(this.dateRange)
             this.snackbar = true;
-            this.$http.get(this.$apiUrl + '/get_all_obat_by_date.php?startDate=' + this.dateRange.startDate + '&endDate=' + this.dateRange.endDate)
+            this.$http.get(this.ipAddress + '/get_all_obat_by_date.php?startDate=' + this.dateRange.startDate + '&endDate=' + this.dateRange.endDate)
                 .then((response) => {
                     this.snackbar = false;
                     this.dataRow = response.data.data
@@ -114,7 +115,7 @@ export default {
         },
         fetchData: function() {
             this.snackbar = true;
-            this.$http.get(this.$apiUrl + '/get_all_obat.php')
+            this.$http.get(this.ipAddress + '/get_all_obat.php')
                 .then((response) => {
                     this.snackbar = false;
                     this.dataRow = response.data.data
@@ -126,7 +127,7 @@ export default {
                 return this.fetchData();
             }
             this.isLoading = true;
-            this.$http.get(this.$apiUrl + '/filter_obat.php?category=' + this.selectedItem)
+            this.$http.get(this.ipAddress + '/filter_obat.php?category=' + this.selectedItem)
                 .then((response) => {
                     this.isLoading = false;
                     this.dataRow = response.data.data
@@ -161,6 +162,7 @@ export default {
       }
     },
     created() {
+        this.ipAddress = 'http://' + localStorage.getItem("ip_address")
         this.fetchData()
         // console.log(this.dataRow)
     }   

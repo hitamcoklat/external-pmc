@@ -196,7 +196,8 @@
         dataRow: [],
         isUpdate: false,
         dataExists: false,
-        isSamakanTarif: false
+        isSamakanTarif: false,
+        ipAddress: ''
       }
     },
     methods: {
@@ -219,7 +220,7 @@
       fetchData() {
         this.snackbar = true;
         // cek rekam medis exist
-        this.$http.get(this.$apiUrl + '/get-tindakan.php')
+        this.$http.get(this.ipAddress + '/get-tindakan.php')
             .then((response) => {
                 if(response.data.status == true) {
                     this.snackbar = false;
@@ -251,7 +252,7 @@
       fetchDataKelas() {
         console.log(this.dataExists)
         this.overlay = true;
-        this.$http.get(this.$apiUrl + '/get-list-kelas-tindakan.php')
+        this.$http.get(this.ipAddress + '/get-list-kelas-tindakan.php')
             .then((response) => {
                 if(response.data.status == true) {
                     this.overlay = false;
@@ -299,7 +300,7 @@
                 NON_MEDIS: this.formNonMedis
             }
 
-            this.$http.post(this.$apiUrl + '/input-tarif-kelas-tindakan.php?id_tindakan=' + this.idTindakan, data)
+            this.$http.post(this.ipAddress + '/input-tarif-kelas-tindakan.php?id_tindakan=' + this.idTindakan, data)
                 .then((response) => {
                     if(response.data.jmlData > 0) {
                         alert('Data berhasil ditambahkan');
@@ -311,7 +312,7 @@
 
       hapusTarifKelas() {
           if(confirm('Apakah anda yakin ingin menghapus data?')) {
-            this.$http.get(this.$apiUrl + '/input-tarif-kelas-tindakan.php?remove=true&id=' + this.idTindakan)
+            this.$http.get(this.ipAddress + '/input-tarif-kelas-tindakan.php?remove=true&id=' + this.idTindakan)
                 .then((response) => {
                     this.fetchTarifTindakanByIdTindakan(this.idTindakan)
                 }) 
@@ -319,7 +320,7 @@
       },
 
       fetchTarifTindakanByIdTindakan(id) {
-        this.$http.get(this.$apiUrl + '/read-tarif-tindakan.php?id_tindakan=' + id)
+        this.$http.get(this.ipAddress + '/read-tarif-tindakan.php?id_tindakan=' + id)
             .then((response) => {
                 if(response.data.status == true) {
                     let { data } = response.data;
@@ -356,7 +357,7 @@
             NAMA: this.namaTindakan,
         }    
         
-        this.$http.post(this.$apiUrl + '/insert-tindakan.php', data)
+        this.$http.post(this.ipAddress + '/insert-tindakan.php', data)
             .then((response) => {
               if(response.data.status == true) {
                 this.alertSukses = true,
@@ -375,7 +376,7 @@
             ID: this.idTindakan
         }    
         
-        this.$http.post(this.$apiUrl + '/insert-tindakan.php?update=true', data)
+        this.$http.post(this.ipAddress + '/insert-tindakan.php?update=true', data)
             .then((response) => {
               if(response.data.status == true) {
                 this.alertSukses = true,
@@ -404,7 +405,7 @@
 
       deleteItem (item) {
         if(confirm('Apakah anda yakin ingin menghapus tindakan ini?')) {
-            this.$http.get(this.$apiUrl + '/insert-tindakan.php?remove=true&id=' + item.ID)
+            this.$http.get(this.ipAddress + '/insert-tindakan.php?remove=true&id=' + item.ID)
                 .then((response) => {                
                     this.fetchData();
                 })
@@ -413,6 +414,7 @@
 
     },
     created() {
+        this.ipAddress = 'http://' + localStorage.getItem("ip_address")
         this.fetchData();
     }
   }

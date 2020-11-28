@@ -37,6 +37,31 @@ const routes = [
     component: () =>import("../views/Dokter.vue")
   },
   {
+    path: "/list-pasien",
+    name: "ListPasien",
+    component: () =>import("../views/ListPasien.vue")
+  },
+  {
+    path: "/edit-pasien",
+    name: "EditPasien",
+    component: () =>import("../views/EditPasien.vue")
+  },
+  {
+    path: "/bridging-kamar",
+    name: "BridgingKamar",
+    component: () =>import("../views/BridgingKamar.vue")
+  },
+  {
+    path: "/config",
+    name: "Konfigurasi",
+    component: () =>import("../views/Konfigurasi.vue")
+  },
+  {
+    path: "/dashboard-bpjs",
+    name: "DashboardBpjs",
+    component: () =>import("../views/DashboardBpjs.vue")
+  },
+  {
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard
